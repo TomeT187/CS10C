@@ -17,15 +17,12 @@ void Playlist::PrintMenu(const string& title) const {
 //Zybooks Step 5
 //Adds song to the end of the list
 //does not reasign tail - if used on the tail then tail needs to be reasigned manually
-void PlaylistNode::InsertAfter(const string& id, const std::string& song, const std::string& artist, int length){
-  PlaylistNode* newSong = new PlaylistNode(id,song,artist,length);//creates a new song node
-  newSong->SetNext(nextNodePtr);                                  //sets the new node's next to the original's next
-  SetNext(newSong);                                               //sets original's next to the new node
+void PlaylistNode::InsertAfter(PlaylistNode* nextNode){
+  nextNode->SetNext(nextNodePtr);                                  //sets the new node's next to the original's next
+  SetNext(nextNode);                                               //sets original's next to the new node
 }
 
 void Playlist::AddSong(const string& id, const std::string& song, const std::string& artist, int length) {
-  // CODETURD: This is a stub.  You'll remove it and put in code for a
-  // CODETURD: real insert here.
   PlaylistNode* newSongNode = new PlaylistNode(id,song,artist,length);
   
   //if the playlist is empty -> sets both head and tail to new song
@@ -46,15 +43,15 @@ void Playlist::RemoveSong() {
       return;
     }
   string IDtoRemove;
+  cout << "REMOVE SONG" << endl;
   cout << "Enter song's unique ID:" << endl;
   cin >> IDtoRemove;
   for(PlaylistNode* curr = head; curr != nullptr; curr = curr->GetNext()) {
     if(curr->GetID() == IDtoRemove){
       DeleteSong(curr);
+      cout << "\"" << curr->GetSongName() << "\" removed." << endl << endl;
     }
   }
-  //DeleteSong(IDtoRemove);
-  
   
 }
 void Playlist::DeleteSong(PlaylistNode* nodeToRemove){
@@ -72,14 +69,11 @@ void Playlist::DeleteSong(PlaylistNode* nodeToRemove){
     }
   }
   prevToRemove->SetNext(nodeToRemove->GetNext());                               //sets the previous node's next to current's next
-  cout << "\"" << nodeToRemove->GetSongName() << "\" removed" << endl;
+  
   delete nodeToRemove;                                                  //deletes curr
   songCount--;
 }
     
-  
-
-
 //Zybooks Step 7
 //Asks user for the posistion of a song and the desired new position
 //valid positions are 1 to the number of nodes  
@@ -89,7 +83,8 @@ void Playlist::ChangePositionSong() {
   int firstPosistion, secondPosistion;
   cout << "Enter song's current position:" << endl;
   cin >> firstPosistion;
-  if(firstPosistion > songCount){
+  //if the chosen song is greater than or less than the size of the playlist then the function does nothing
+  if(firstPosistion > songCount || (firstPosistion < 1) ){
     cout << "invalid song number" << endl;
     return;
   }
@@ -97,41 +92,67 @@ void Playlist::ChangePositionSong() {
   cin >> secondPosistion;
 
   PlaylistNode* originalSong = head;
-    for(int i = 1; i < firstPosistion; i++){//iterates through the playlist and reasigns original song to the node at
-      originalSong = originalSong->GetNext();//the index give by the user
+    for(int i = 1; i < firstPosistion; i++){//iterates through the playlist and reasigns original 
+      originalSong = originalSong->GetNext();//song to the node at the index give by the user
     }
 
   if(secondPosistion > songCount){// if the new posistion is greater than the playlist length then moves the song to the tail
-    //uses AddSong to add original Song to back of the playlist
-    tail->InsertAfter(originalSong->GetID(),originalSong->GetSongName(),originalSong->GetArtistName(),originalSong->GetSongLength());
+    PlaylistNode* nextNode = new PlaylistNode(originalSong->GetID(),originalSong->GetSongName(),originalSong->GetArtistName(),originalSong->GetSongLength());
+    tail->InsertAfter(nextNode);
+    songCount++;
     tail = tail->GetNext();//reasigns tail 
     //deletes original song
     DeleteSong(originalSong);
   }
-  else if(secondPosistion < 1){//if the new posistion is less than 1 it moves the song to the head
+  else if(secondPosistion <= 1){//if the new posistion is less than 1 it moves the song to the head
     PlaylistNode* newSong = new PlaylistNode(originalSong->GetID(),originalSong->GetSongName(),originalSong->GetArtistName(),originalSong->GetSongLength());
     newSong->SetNext(head);
+    songCount++;
     head = newSong;
     DeleteSong(originalSong);
   }
-  else{cout<<"unfinished"<<endl;}
-
-
-  cout << "change position song" << endl;
+  else{
+    PlaylistNode* nodeBeforeMoving = head;
+    for(int i = 2; i < secondPosistion; i++){
+      nodeBeforeMoving = nodeBeforeMoving->GetNext();
+    }
+    cout << "before: " << nodeBeforeMoving->GetID() << endl;
+    PlaylistNode* nextNode = new PlaylistNode(originalSong->GetID(),originalSong->GetSongName(),originalSong->GetArtistName(),originalSong->GetSongLength());
+    nodeBeforeMoving->InsertAfter(nextNode);
+    songCount++;
+    if(nodeBeforeMoving == tail){
+      tail = tail->GetNext();
+    }
+    DeleteSong(originalSong);
+  }
 }
     
 void Playlist::OutputSongsByArtist() const {
-  cout << "output songs by artist" << endl;
+  cout << "Enter artist's name: " << endl;
+  string artistNameIn;
+  cin >> artistNameIn;
+  int songNumber = 1;
+  for(const PlaylistNode* curr = head; curr != nullptr; curr = curr->GetNext()) {
+    if(curr->GetArtistName() == artistNameIn){
+      cout << songNumber << "." << endl;
+      cout << "Unique ID: " << curr->GetID() << endl;
+      cout << "Song Name: " << curr->GetSongName() << endl;
+      cout << "Artist Name: " << curr->GetArtistName() << endl;
+      cout << "Song Length (in seconds): " << curr->GetSongLength() << endl;
+      cout << endl;
+    }
+    songNumber++;
+  }
 }
     
 void Playlist::OutputTotalTime() const {
-  // CODETURD: We write a lot of traversal loops with linked lists
-  // CODETURD: They come in a couple of forms, but this is very
-  // CODETURD: common.  Since this is a 'const' routine, the head
-  // CODETURD: pointer is const, so we use a const curr.
+  int sumSeconds = 0;
   for(const PlaylistNode* curr = head; curr != nullptr; curr = curr->GetNext()) {
+    sumSeconds += curr->GetSongLength();
   }
-  cout << "output total time" << endl;
+
+  cout << "OUTPUT TOTAL TIME OF PLAYLIST (IN SECONDS)" << endl;
+  cout << "Total time: " << sumSeconds << " seconds" << endl << endl;
 }
 
 //Zybooks Step 4
@@ -149,7 +170,7 @@ void Playlist::OutputFullPlaylist() const {
     cout << "Unique ID: " << curr->GetID() << endl;
     cout << "Song Name: " << curr->GetSongName() << endl;
     cout << "Artist Name: " << curr->GetArtistName() << endl;
-    cout << "Song Length (in seconds): " << curr->GetSongLength();
+    cout << "Song Length (in seconds): " << curr->GetSongLength() << endl;
     cout << endl;
     counter++;
   }

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 #include "Playlist.h"
 
@@ -8,11 +9,10 @@ int main() {
   //Zybooks Step 2
   //Asks user for playlist title
   string title;
-  cout << "Enter playlist's title:" << endl;
-  cin >> title;
+  cout << "Enter playlist's title:" << endl << endl;
+  getline(cin,title);
 
-  // Build a playlist which we will use to execute the commands
-  // in the loop below
+
   Playlist P;
 
   while(true) {
@@ -26,7 +26,6 @@ int main() {
     // prompt for something that we needed.
     string command;
     if (!(cin >> command)) break;
-
     // We support seven commands.  The Lab prompt says only
     // to prompt again on error... so we don't output any message
     // on a bad command
@@ -38,10 +37,11 @@ int main() {
       cout << "Enter song's unique ID:" << endl;
       cin >> ID;
       cout << "Enter song's name:" << endl;
-      cin >> songName;
+      getline(cin,songName);//idk why it doesnt work on Zybooks without this
+      getline(cin,songName);//i really wish i knew why this was happening
       cout << "Enter artist's name:" << endl;
-      cin >> artistName;
-      cout << "Enter song's length (in seconds):" << endl;
+      getline(cin,artistName);;
+      cout << "Enter song's length (in seconds):" << endl << endl;
       cin >> length;
       P.AddSong(ID,songName,artistName,length);
     } else if (command == "d") {
@@ -63,6 +63,7 @@ int main() {
   // If cin is in an error state (even end-of-file), then
   // something went wrong
   if (!cin) {
+    P.OutputFullPlaylist();
     cout << "Program did not exit cleanly" << endl;
     return 1;
   }
