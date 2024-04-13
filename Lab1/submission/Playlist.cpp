@@ -140,7 +140,6 @@ void Playlist::OutputSongsByArtist() const {
   cout << "Enter artist's name:" << endl << endl;
   string artistNameIn;
   getline(cin,artistNameIn);
-  getline(cin,artistNameIn);//zybooks doesnt work without this
   int songNumber = 1;
   //iterates through the list and outputs info of a song if it is written by the chosen artist
   for(const PlaylistNode* curr = head; curr != nullptr; curr = curr->GetNext()) {
