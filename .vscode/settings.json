@@ -1,6 +1,13 @@
 {
     "files.associations": {
         "random": "cpp",
+<<<<<<< HEAD
         "iosfwd": "cpp"
+=======
+        "ostream": "cpp",
+        "iostream": "cpp",
+        "string": "cpp",
+        "xstring": "cpp"
+>>>>>>> 27ddf79094bad2f3f62f873b3b22b567976d1371
     }
 }

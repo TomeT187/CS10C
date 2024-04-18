@@ -37,8 +37,7 @@ int main() {
       cout << "Enter song's unique ID:" << endl;
       cin >> ID;
       cout << "Enter song's name:" << endl;
-      getline(cin,songName);//idk why it doesnt work on Zybooks without this
-      getline(cin,songName);//i really wish i knew why this was happening
+      getline(cin,songName);
       cout << "Enter artist's name:" << endl;
       getline(cin,artistName);;
       cout << "Enter song's length (in seconds):" << endl << endl;
