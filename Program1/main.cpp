@@ -9,12 +9,15 @@ struct Node {
     Node* next;
 };
 
+//dynamically creates a new node with the value passed into the function
+//returns a pointer to the new node
 Node* newNode(string payload) {
    Node* nodeToReturn = new Node;
    nodeToReturn->payload = payload;
    return nodeToReturn;
 }
 
+//creates a cicularly linked list and returns the head
 Node* loadGame(int n, vector<string> names) {
     Node* head = nullptr;
     Node* prev = nullptr;
@@ -25,11 +28,9 @@ Node* loadGame(int n, vector<string> names) {
         if (head == nullptr) {
             head = newNode(name); // initialize head specially
             prev = head;
-            /** fill in this code **/
         } else {
             prev->next = newNode(name);
             prev = prev->next;
-            /** fill in this code **/
         }
     }
 
@@ -59,10 +60,9 @@ Node* runGame(Node* start, int k) { // josephus w circular list, k = num skips
           curr = curr->next;
         }
 
-        /** fill in this code **/ // delete kth node
+         // delete kth node
         prev->next = curr->next;
         delete curr;
-        /** fill in this code **/
         curr = prev->next;
     }
 
@@ -71,7 +71,7 @@ Node* runGame(Node* start, int k) { // josephus w circular list, k = num skips
 
 /* Driver program to test above functions */
 int main() {
-    int n=1, k=1, max; // n = num names; k = num skips (minus 1)
+    int n=1, k=1; // n = num names; k = num skips (minus 1)
     string name;
     vector<string> names;
 
