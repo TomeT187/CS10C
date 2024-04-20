@@ -9,7 +9,7 @@ int main(){
     testList.push_front(3);
     testList.push_front(4);
     cout << testList << endl;
-    //cout << "Is empty: " << testList.empty() << endl;
+    cout << "Is empty: " << testList.empty() << endl;
 
 
     testList.push_back(1);
