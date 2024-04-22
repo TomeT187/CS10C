@@ -34,7 +34,7 @@ Node* loadGame(int n, vector<string> names) {
         }
     }
 
-    if (prev != nullptr) {
+    if (prev != nullptr) {//sets last node's next to the head - completes circle
         prev->next = head;
     }
     return head;
