@@ -11,18 +11,19 @@ struct Node {
 
 //dynamically creates a new node with the value passed into the function
 //returns a pointer to the new node
-Node* newNode(string payload) {
+Node* newNode(const string& payload) {
    Node* nodeToReturn = new Node;
    nodeToReturn->payload = payload;
    return nodeToReturn;
 }
 
 //creates a cicularly linked list and returns the head
-Node* loadGame(int n, vector<string> names) {
+Node* loadGame(int n, const vector<string>& names) {
     Node* head = nullptr;
     Node* prev = nullptr;
     string name;
 
+    //creates a new node in the list for each name in the vector
     for (int i = 0; i < n; ++i) {
         name = names.at(i);
         if (head == nullptr) {
@@ -45,6 +46,8 @@ void print(Node* start) { // prints list
     while (curr != nullptr) {
         cout << curr->payload << endl;
         curr = curr->next;
+        
+        //exit condition for while loop
         if (curr == start) {
             break; // exit circular list
         }
