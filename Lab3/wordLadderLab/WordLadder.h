@@ -32,6 +32,8 @@ class WordLadder {
        to the file, the message, "No Word Ladder Found."
     */
     void outputLadder(const string &start, const string &end, const string &outputFile);
+
+    //defaults copy constructor and assignment operator to delete 
     WordLadder(const WordLadder&) = delete;
     WordLadder& operator=(const WordLadder&) = delete;
 };

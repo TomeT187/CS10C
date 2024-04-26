@@ -9,6 +9,9 @@ using std::string;
 using std::endl;
 using std::runtime_error;
 
+
+//takes input from user and verifies it for the file names and words to create the word ladder
+//then creates a word ladder object and calls outputLadder function
 int main() {
   string dictFile, wordBegin, wordEnd, outFile;
   cout << "Enter the name of the dictionary file: ";
