@@ -1,16 +1,9 @@
-// PROFPAT: I've cleaned up the code a bit.  The quality checkers won't ding you if you
-// PROFPAT: use the original version, but this should pass the normal quality rubric
-
-// We include headers for what we use.  First system headers, then project headers
-// unless this is an implementation file
 #include <iostream>
 #include <string>
 #include <stdexcept>
 
 #include "stack.h"
 
-// Zybooks just blasts away at the global namespace with: using namespace std;
-// but we are sophisticated and use
 using std::cin;
 using std::cout;
 using std::endl;
