@@ -28,12 +28,6 @@ public:
   void preOrder() const;
   void postOrder() const;
   void inOrder() const;
-  
-  // PROFPAT: This is a helpful thing to see what your tree really looks like
-  // PROFPAT: You should delete it before submitting (code turd)
-  void debug() const {
-    debug(root,0);
-  }
 
 private:
   // PROFPAT: You will probably want to write these helper functions to do the
@@ -44,6 +38,4 @@ private:
   void postOrder(Node* tree) const;
   void inOrder(Node* tree) const;
 
-  // PROFPAT: Code turd -- remove before submitting
-  void debug(Node* tree, int indent) const;
 };
