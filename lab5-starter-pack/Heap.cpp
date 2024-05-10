@@ -8,12 +8,14 @@ Heap::Heap()
 {
 }
 
+//calls dequeue until all items are removed
 Heap::~Heap() {
-  for (int i = 0; i < numItems; i++){
-    delete arr[i];
+  while(numItems > 0){
+    dequeue();
   }
 }
-
+//places new node at the bottom of the heap
+//percolates up until in the correct position
 void Heap::enqueue(PrintJob* job) {
   if(numItems  == MAX_HEAP_SIZE) {
     return;
@@ -23,15 +25,21 @@ void Heap::enqueue(PrintJob* job) {
   numItems++;
 }
 
+//removes node at the top of the heap and calls delete on the pointer
+//takes lowest node and replaces it
+//percolates the node down until in the correct position
 void Heap::dequeue() {
   if(numItems == 0){
     return;
   }
+  delete arr[0];
   arr[0] = arr[numItems - 1];
   trickleDown(0);
   numItems--;
+  
+  
 }
-
+//returns the value at the top of the heap
 PrintJob* Heap::highest() {
   if(numItems == 0){
     return nullptr;
@@ -39,9 +47,9 @@ PrintJob* Heap::highest() {
   return arr[0];
 }
 
+//prints node at the top of the heap as followed: Priority: priority, Job Number: jobNum, Number of Pages: numPages and ends with a newline
 void Heap::print() const {
   if(numItems == 0) throw runtime_error("heap is empty");
-  //Priority: priority, Job Number: jobNum, Number of Pages: numPages
   cout << "Priority: " << arr[0]->getPriority() << ", Job Number: " 
           << arr[0]->getJobNumber() << ", Number of Pages: " << arr[0]->getPages() << endl;
 }
