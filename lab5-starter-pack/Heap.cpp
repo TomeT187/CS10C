@@ -9,28 +9,33 @@ Heap::Heap()
 }
 
 Heap::~Heap() {
-  delete[] *arr;
+  for (int i = 0; i < numItems; i++){
+    delete arr[i];
+  }
 }
-//Other rule of three stuff too!
-
 
 void Heap::enqueue(PrintJob* job) {
-  if(numItems  == MAX_HEAP_SIZE) throw runtime_error("heap is full");
+  if(numItems  == MAX_HEAP_SIZE) {
+    return;
+  }
   arr[numItems] = job;
   MaxHeapPercolateUp(numItems);
   numItems++;
-
 }
 
 void Heap::dequeue() {
-  if(numItems == 0) throw runtime_error("heap is empty");
+  if(numItems == 0){
+    return;
+  }
   arr[0] = arr[numItems - 1];
   trickleDown(0);
   numItems--;
-
 }
 
 PrintJob* Heap::highest() {
+  if(numItems == 0){
+    return nullptr;
+  }
   return arr[0];
 }
 
@@ -46,8 +51,10 @@ void Heap::print() const {
 void Heap::MaxHeapPercolateUp(int nodeIndex) {
   int parentIndex;
   PrintJob* swapHolder;
+   //loops until you reach the top
    while (nodeIndex > 0) {
       parentIndex = (nodeIndex - 1) / 2;
+      //if node is smaller than its parent: do nothing
       if (arr[nodeIndex]->getPriority() <= arr[parentIndex]->getPriority())
          return;
       else {
@@ -66,9 +73,9 @@ void Heap::trickleDown(int nodeIndex){
 
   int maxValue;
   int maxIndex;
-
   PrintJob* swapHolder;
 
+  //while the end of the array has not been reached
   while (childIndex < numItems) {
       // Find the max among the node and all the node's children
       maxValue = value;
@@ -79,10 +86,11 @@ void Heap::trickleDown(int nodeIndex){
             maxIndex = i + childIndex;
          }
       }
-
+      //do nothing if values are the same
       if (maxValue == value) {
          return;
       }
+      //swaps parent with child 
       else {
         swapHolder = arr[nodeIndex];
         arr[nodeIndex] = arr[maxIndex];
