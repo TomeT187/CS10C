@@ -48,26 +48,41 @@ Tree::~Tree() {
 
 
 bool Tree::noChildren( Node* node ) const {
-  throw runtime_error("You need to write this");
+  return (node->left == nullptr);
 }
 
 void Tree::insert( const string& word ) {
   if ( root == nullptr ) {
     root = new Node( word );
   } else {
-    insert( root, word );
+    //find the correct leaf to add to
+    Node* curr = root;
+    while(noChildren(curr)){
+      if(word < curr->small){
+        cout << 1;
+        curr = curr->left;
+      }else if(curr->numData = 1){//if there is only one key in curr
+        cout << 2;
+        curr = curr->middle;
+      }else{
+        cout << 3;
+        curr = curr->right;
+      }
+    }
+    cout << "made it" << endl;
+    insert( curr, word );
   }
 }
 
 // TURD: Concentrate on the easy ones needed for test1 first
 void Tree::insert( Node* curr, const string& word ) {
+  
   //if the node being inserted to has room
   if(curr->numData != 2){
     addData(curr,word);
   }
   //need to explode
   else{
-
     //you are root
     if(curr == root){
       Node* newSmallChild = new Node(curr->small);
@@ -80,9 +95,31 @@ void Tree::insert( Node* curr, const string& word ) {
         root = new Node(word);
       }
       root->left = newSmallChild;
-      root->right = newBigChild;
+      root->middle = newBigChild;
+      newSmallChild->parent = root;
+      newBigChild->parent = root;
       delete curr;
       return;
+    }else{
+      curr = curr->parent;
+      //if parent has room, add it
+      if(curr->numData != 2){
+        addData(curr,word);
+      }else{
+        //if not, explode parent
+        if(word < curr->small){
+          insert(curr->parent,curr->small);
+          curr->small = word;
+        }else if(word < curr->large){
+          insert(curr->parent,word);
+        }else{
+          insert(curr->parent,curr->large);
+          curr->large = word;
+        }
+
+      }
+      return;
+      
     }
     //parent has room
     //parent is full
@@ -128,6 +165,7 @@ void Tree::preOrder( const Node* curr ) const {
     cout << curr->large << " ";
   }
   preOrder(curr->left);
+  preOrder(curr->middle);
   preOrder(curr->right);
 }
 
@@ -140,6 +178,7 @@ void Tree::inOrder(const Node* curr) const {
   if(curr == nullptr) return;
   preOrder(curr->left);
   cout << curr->small << " ";
+  preOrder(curr->middle);
   if(curr->numData == 2){
     cout << curr->large << " ";
   }
@@ -154,6 +193,7 @@ void Tree::postOrder() const {
 void Tree::postOrder(const Node* curr) const {
   if(curr == nullptr) return;
   preOrder(curr->left);
+  preOrder(curr->middle);
   preOrder(curr->right);
   cout << curr->small << " ";
   if(curr->numData == 2){
