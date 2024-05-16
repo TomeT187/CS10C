@@ -67,6 +67,28 @@ void Tree::insert( Node* curr, const string& word ) {
   }
   //need to explode
   else{
+
+    //you are root
+    if(curr == root){
+      Node* newSmallChild = new Node(curr->small);
+      Node* newBigChild;
+      if(curr->large < word){
+        newBigChild = new Node(word);
+        root = new Node(curr->large);
+      }else{
+        newBigChild = new Node(curr->large);
+        root = new Node(word);
+      }
+      root->left = newSmallChild;
+      root->right = newBigChild;
+      delete curr;
+      return;
+    }
+    //parent has room
+    //parent is full
+    //parent is full and is root
+
+
     // Node* newSmallChild = new Node(curr->small);
     // if(curr->large < word){
     //   Node* newBigChild = new Node(word);

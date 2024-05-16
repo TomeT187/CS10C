@@ -26,7 +26,8 @@ using namespace std;
 void printOrders(Tree *tree) {
   cout << "Preorder = ";
   tree->preOrder( );
-  cout << "Inorder = ";
+  //REMOVE \T BEFORE SUMBIT ONLY FOR DEBUG
+  cout << "Inorder = " << "\t";
   tree->inOrder( );
   cout << "Postorder = ";
   tree->postOrder( );
