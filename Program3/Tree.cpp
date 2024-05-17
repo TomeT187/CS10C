@@ -6,7 +6,7 @@ using namespace std;
 
 /* Uncomment these out if you want to use them... the 'static' means
    that they are only available here in Tree.cpp
-
+*/
 static const string& midStr( const string& s1, const string& s2, const string& s3 ) {
   if (( s1 < s2 && s1 > s3 ) ||( s1 < s3 && s1 > s2 ) ) 
     return s1;
@@ -33,7 +33,7 @@ static const string& maxStr( const string& s1, const string& s2, const string& s
   else
     return s3;
 }
-*/
+
 
 Tree::Tree() {
   root = NULL;
@@ -57,7 +57,7 @@ void Tree::insert( const string& word ) {
   } else {
     //find the correct leaf to add to
     Node* curr = root;
-    while(noChildren(curr)){
+    while(! noChildren(curr)){
       if(word < curr->small){
         cout << 1;
         curr = curr->left;
@@ -79,64 +79,64 @@ void Tree::insert( Node* curr, const string& word ) {
   
   //if the node being inserted to has room
   if(curr->numData != 2){
+    cout << "adding " << word << " to " << curr->small << endl;
     addData(curr,word);
   }
   //need to explode
   else{
-    //you are root
-    if(curr == root){
-      Node* newSmallChild = new Node(curr->small);
-      Node* newBigChild;
-      if(curr->large < word){
-        newBigChild = new Node(word);
-        root = new Node(curr->large);
-      }else{
-        newBigChild = new Node(curr->large);
-        root = new Node(word);
-      }
-      root->left = newSmallChild;
-      root->middle = newBigChild;
-      newSmallChild->parent = root;
-      newBigChild->parent = root;
+    cout << "explosion needed" << endl;
+    string low = minStr(curr->small,word,curr->large);
+    string mid = midStr(curr->small,word,curr->large);
+    string high = maxStr(curr->small,word,curr->large);
+    
+    
+    //if the tree is only one node
+    if(curr->parent == nullptr && noChildren(curr)){
+      cout << "tree is only one node" << endl;
+      root = new Node(mid);
+      root->left = new Node(low);
+      root->left->parent = root;
+      root->middle = new Node(high);
+      root->middle->parent = root;
       delete curr;
-      return;
     }else{
-      curr = curr->parent;
-      //if parent has room, add it
-      if(curr->numData != 2){
-        addData(curr,word);
-      }else{
-        //if not, explode parent
-        if(word < curr->small){
-          insert(curr->parent,curr->small);
-          curr->small = word;
-        }else if(word < curr->large){
-          insert(curr->parent,word);
+      cout << "here " << endl;
+      cout << low << mid << high << endl; 
+      if(curr == curr->parent->left){
+        Node* newLowNode = new Node(low);
+        newLowNode->parent = curr->parent;
+        Node* newMidNode = new Node(high);
+        newMidNode->parent = curr->parent;
+        curr->parent->left = newLowNode;
+        curr->parent->right = curr->parent->middle;
+        curr->parent->middle = newMidNode;
+        if(curr->parent->numData == 1){
+          insert(curr->parent,mid);
         }else{
-          insert(curr->parent,curr->large);
-          curr->large = word;
+          throw runtime_error("You need to write this to get simple insert working");
         }
+        
 
+
+      }else if(curr == curr->parent->middle){
+        Node* newMiddleNode = new Node(low);
+        newMiddleNode->parent = curr->parent;
+        Node* newRightNode = new Node(high);
+        newRightNode->parent = curr->parent;
+        curr->parent->middle = newMiddleNode;
+        curr->parent->right = newRightNode;
+        if(curr->parent->numData == 1){
+          insert(curr->parent,mid);
+        }else{
+          throw runtime_error("You need to write this to get simple insert working");
+        }
+      }else{
+        throw runtime_error("You need to write this to get simple insert working");
       }
-      return;
-      
     }
-    //parent has room
-    //parent is full
-    //parent is full and is root
-
-
-    // Node* newSmallChild = new Node(curr->small);
-    // if(curr->large < word){
-    //   Node* newBigChild = new Node(word);
-    //   insert(curr->parent,curr->large);
-    // }else{
-    //   Node* newBigChild = new Node(curr->large);
-    //   insert(curr->parent,word);
-    // }
-    throw runtime_error("You need to write this to get simple insert working");
     
-    
+
+    //throw runtime_error("You need to write this to get simple insert working");
   }
   
 }
@@ -160,9 +160,9 @@ void Tree::preOrder() const {
 
 void Tree::preOrder( const Node* curr ) const {
   if(curr == nullptr) return;
-  cout << curr->small << " ";
+  cout  << "| " << curr->small;
   if(curr->numData == 2){
-    cout << curr->large << " ";
+    cout << curr->large << " |";
   }
   preOrder(curr->left);
   preOrder(curr->middle);
@@ -176,13 +176,13 @@ void Tree::inOrder() const {
 
 void Tree::inOrder(const Node* curr) const {
   if(curr == nullptr) return;
-  preOrder(curr->left);
+  inOrder(curr->left);
   cout << curr->small << " ";
-  preOrder(curr->middle);
+  inOrder(curr->middle);
   if(curr->numData == 2){
     cout << curr->large << " ";
   }
-  preOrder(curr->right);
+  inOrder(curr->right);
 }
 
 void Tree::postOrder() const {
@@ -192,9 +192,9 @@ void Tree::postOrder() const {
 
 void Tree::postOrder(const Node* curr) const {
   if(curr == nullptr) return;
-  preOrder(curr->left);
-  preOrder(curr->middle);
-  preOrder(curr->right);
+  postOrder(curr->left);
+  postOrder(curr->middle);
+  postOrder(curr->right);
   cout << curr->small << " ";
   if(curr->numData == 2){
     cout << curr->large << " ";
