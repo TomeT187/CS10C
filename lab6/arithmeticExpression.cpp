@@ -12,15 +12,35 @@ arithmeticExpression::arithmeticExpression(const string& expression)
 {
 }
 
+//calls TreeNode Destructor
+arithmeticExpression::~arithmeticExpression(){
+    delete root;
+}
+
+//recursively destroys all subtrees
+TreeNode::~TreeNode(){
+      if(left != nullptr){
+         delete left;
+      }
+      if(right != nullptr){
+         delete right;
+      }
+      delete this;
+    }
+
+
 void arithmeticExpression::buildTree() {
     const string postfix = infix_to_postfix();
     stack<TreeNode*> nodeStack;
     TreeNode* oppNode;
+    //if current char is an opperand add it to the stack as a new node
     for(unsigned int i = 0; i < postfix.size(); i++){
         if(not is_operator(postfix.at(i))){
             oppNode = new TreeNode(postfix.at(i));
             nodeStack.push(oppNode);
-        }else{
+        }else{//if the current char is an opperator
+            //take last two nodes from the stack and set them as the children of an operator node
+            //place operator node in the tree
             oppNode = new TreeNode(postfix.at(i));
             oppNode->right = nodeStack.top();
             nodeStack.pop();
