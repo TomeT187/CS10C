@@ -23,20 +23,12 @@ public:
 
 private:
 
-  // MASSIVE CODE TURD
-  // These helpers are suggested... the standard zybook solution used them
-  // and you may find defining these useful. Some you absolutely
-  // need (e.g. preOrder needs to have a helper function since it
-  // MUST be done recursively to cover all nodes).   Use these as
-  // a guide for planning what you might want to do.
-
   bool noChildren(Node* curr) const;
-  void insert(Node* curr, const string& word);
+  Node* insert(Node* curr, const string& word);
   void addData(Node* addHere, const string& word);
   void preOrder(const Node* curr) const;
   void inOrder(const Node* curr) const;
   void postOrder(const Node* curr) const;
-  void fix(Node* emptyNode);
-  bool hasTwoChildSibling(Node* sibling) const;
   Node* search(Node* curr, const string& word);
+  void destructorHelper(Node* target);
 };
