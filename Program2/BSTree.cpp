@@ -101,7 +101,8 @@ int BSTree::height(const string& key) const {
 
 //ran out of time :(
 void BSTree::remove(const string& key) {
-  throw runtime_error("not done remove");
+  remove(nullptr,root,key);
+  
 }
 
 //calls private helper function 
@@ -128,6 +129,71 @@ void BSTree::inOrder() const {
 //ran out of time :(
 //ran out of time :(
 void BSTree::remove(Node* parent, Node* tree, const string& key) {
+  //if a leaf is reached without finding the value to remove the value is not in the tree
+  if(tree == nullptr){
+    cout << "heres" << endl;
+    return;
+    
+  }
+  //when the key is found
+  if(tree->key == key){
+    //if the key count is more than one, decrement the count
+    if(tree->count > 1){
+      tree->count--;
+    }
+    //if key is in a leaf and key count is one
+    else if(tree->left == nullptr && tree->right == nullptr){
+      //if the key is in the root
+      if(parent == nullptr){
+        root = nullptr;
+      }
+      //key is to the left
+      else if(parent->left == tree){
+        parent->left = nullptr;
+      }
+      //key is to the right
+      else{
+        parent->right = nullptr;
+      }
+      cout << "deleting " << tree->key << endl;
+      delete tree;
+    }
+    //else the key is in a non leaf node
+    else{
+      cout << "non leaf" << endl;
+      //find largest left or smallest right
+      Node* replacement;
+      string newKey;
+      int newCount;
+      if(tree->left != nullptr){
+        replacement = tree->left;
+        newKey = replacement->key;
+        newCount = 
+        while(replacement->right != nullptr){
+          replacement = replacement->right;
+          newKey = replacement->key;
+        }
+        remove(tree,tree->left,newKey);
+      }else{
+        replacement = tree->right;
+        newKey = replacement->key;
+        while(replacement->left != nullptr){
+          replacement = replacement->left;
+          newKey = replacement->key;
+        }
+        remove(tree,tree->right,newKey);
+      }
+      //replace the node to be deleted with the replacement's values
+      tree->key = newKey;
+      tree->count = 1;
+    }
+  }else if(key < tree->key){
+    //key is on the left of the current node
+    remove(tree,tree->left,key);
+  }else{
+    //key is on the right of the current node
+    remove(tree,tree->right,key);
+  }
   // Hint: A good approach is to find the parent and the curr node that holds that key
   // Edge case: The key is not found (do nothing)
   // Edge case.  The key count is greater than 1.  Just decrement the count
@@ -140,7 +206,6 @@ void BSTree::remove(Node* parent, Node* tree, const string& key) {
   // or the smallest key in the right tree (since not a leaf one will exist)
   // Copy the target information into the node we found, set the target count to
   // one, and recursively remove it from left or right subtree (current node is the parent)
-  throw runtime_error("not done remove");// :(
 }
 
 int BSTree::height_of(Node* tree) const {
