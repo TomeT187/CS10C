@@ -9,6 +9,8 @@ struct TreeNode{
     TreeNode* left;
     TreeNode* right;
     TreeNode(char key):key(key),left(nullptr),right(nullptr){}
+
+    ~TreeNode();
 };
 
 class arithmeticExpression{
@@ -21,9 +23,9 @@ class arithmeticExpression{
     to the value of parameter passed in. */
     arithmeticExpression(const string &);
 
-    // Implementation of destrucor is NOT optional.
-    // Rule of three is required still
-    //~arithmeticExpression();
+   arithmeticExpression(const arithmeticExpression&) = delete;
+   arithmeticExpression& operator=(const arithmeticExpression&) = delete;
+   ~arithmeticExpression();
 
     /* Converts the infixExpression to its equivalent postfix string
        and then generates the tree and assigns the root node to the 
