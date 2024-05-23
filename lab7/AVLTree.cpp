@@ -1,11 +1,11 @@
-#include "BSTree.h"
+#include "AVLTree.h"
 
 #include <iostream>
 #include <stdexcept>
 
 using namespace std;
 
-void BSTree::insert(const string& key) {
+void AVLTree::insert(const string& key) {
   // Edge case:  The tree is empty
   if(root == nullptr){
     root  = new Node(key);
@@ -40,7 +40,45 @@ void BSTree::insert(const string& key) {
     }
   }
 }
-bool BSTree::search(const string& key) const {
+
+int AVLTree::height_of(Node* tree) const {
+  // The height (length of longest path to the bottom) of an empty tree is -1
+  // Otherwise, you pick the larger of the left height and the right height
+  // and add one to that
+  if(tree == nullptr){//base case for recursive function
+    return -1;
+  }
+  int leftHeight = height_of(tree->left);//returns height in the left direction
+  int rightHeight = height_of(tree->right);//returns height in the right direction
+  if(leftHeight > rightHeight){//returns 1 + the largest of the two heights
+    return (1 + leftHeight);
+  }else{
+    return (1 + rightHeight);
+  }
+}
+
+void AVLTree::printBalanceFactors() const{
+  inOrder(root);
+}
+
+void AVLTree::inOrder(Node* tree) const {
+  // do left, print key, do right
+  if (tree == nullptr) return;
+  inOrder(tree->left);
+  cout << tree->key << "(" << balanceFactor(tree) << "), ";
+  inOrder(tree->right);
+}
+
+unsigned int AVLTree::balanceFactor(Node* curr) const{
+  return 0;
+}
+
+
+//old BST functions
+//old BST functions
+//old BST functions
+//old BST functions
+bool AVLTree::search(const string& key) const {
   // Search can be done in a loop (or recursively).  A loop is best here
   Node* curr = root;
   while(curr != nullptr){
@@ -55,7 +93,8 @@ bool BSTree::search(const string& key) const {
   return false;//if the while loop is exited, the key does not exist
 }
 
-string BSTree::largest() const {
+
+string AVLTree::largest() const {
   // Edge case: Tree is empty (return "")
   // Largest can be done in a loop (or recursively).  A loop is best here
 
@@ -68,7 +107,7 @@ string BSTree::largest() const {
   return largestString;
 }
 
-string BSTree::smallest() const {
+string AVLTree::smallest() const {
   // Smallest can be done in a loop (or recursively).  A loop is best here
   // Edge case: Tree is empty
 
@@ -82,7 +121,7 @@ string BSTree::smallest() const {
   return smallestString;
 }
 
-int BSTree::height(const string& key) const {
+int AVLTree::height(const string& key) const {
   // First find the node with this key, then run "height_of" to get
   // the height that zybooks wants
   Node* curr = root;
@@ -100,33 +139,33 @@ int BSTree::height(const string& key) const {
 }
 
 //ran out of time :(
-void BSTree::remove(const string& key) {
+void AVLTree::remove(const string& key) {
   remove(nullptr,root,key);
   
 }
 
 //calls private helper function 
-void BSTree::preOrder() const {
+void AVLTree::preOrder() const {
   // This wants a ", " after each node and exactly one newline once done
   preOrder(root);
   cout << endl;
 }
 
 //calls private helper function 
-void BSTree::postOrder() const {
+void AVLTree::postOrder() const {
   // This wants a ", " after each node and exactly one newline once done
   postOrder(root);
   cout << endl;
 }
 
 //calls private helper function 
-void BSTree::inOrder() const {
+void AVLTree::inOrder() const {
   // This wants a ", " after each node and exactly one newline once done
   inOrder(root);
   cout << endl;
 }
 
-void BSTree::remove(Node* parent, Node* tree, const string& key) {
+void AVLTree::remove(Node* parent, Node* tree, const string& key) {
   //if a leaf is reached without finding the value to remove the value is not in the tree
   if(tree == nullptr){
     return;
@@ -199,23 +238,9 @@ void BSTree::remove(Node* parent, Node* tree, const string& key) {
   }
 }
 
-int BSTree::height_of(Node* tree) const {
-  // The height (length of longest path to the bottom) of an empty tree is -1
-  // Otherwise, you pick the larger of the left height and the right height
-  // and add one to that
-  if(tree == nullptr){//base case for recursive function
-    return -1;
-  }
-  int leftHeight = height_of(tree->left);//returns height in the left direction
-  int rightHeight = height_of(tree->right);//returns height in the right direction
-  if(leftHeight > rightHeight){//returns 1 + the largest of the two heights
-    return (1 + leftHeight);
-  }else{
-    return (1 + rightHeight);
-  }
-}
 
-void BSTree::preOrder(Node* tree) const {
+
+void AVLTree::preOrder(Node* tree) const {
   // print key, do left, do right
   if (tree == nullptr) return;
   cout << tree->key << "(" << tree->count << "), ";//should have used << operator overloded, oh well
@@ -224,7 +249,7 @@ void BSTree::preOrder(Node* tree) const {
   
 }
 
-void BSTree::postOrder(Node* tree) const {
+void AVLTree::postOrder(Node* tree) const {
   // do left, do right, print key
   if (tree == nullptr) return;
   postOrder(tree->left);
@@ -232,10 +257,4 @@ void BSTree::postOrder(Node* tree) const {
   cout << tree->key << "(" << tree->count << "), ";
 }
 
-void BSTree::inOrder(Node* tree) const {
-  // do left, print key, do right
-  if (tree == nullptr) return;
-  inOrder(tree->left);
-  cout << tree->key << "(" << tree->count << "), ";
-  inOrder(tree->right);
-}
+
