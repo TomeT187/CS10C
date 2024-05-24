@@ -32,9 +32,13 @@ public:
   void inOrder() const;
 
 private:
+  void insert(Node* parent, Node* curr, const string& word);
   int height_of(Node* tree) const;
   void inOrder(Node* tree) const;
-  unsigned int balanceFactor(Node* curr) const;
+  int getBalanceFactor(Node* curr) const;
+  void rotateLeft(Node* parent,Node* curr);
+  void rotateRight(Node* parent,Node* curr);
+  void fix(Node* parent, Node* curr);
 
   //old bst helper functons
   void remove(Node* parent, Node* tree, const string& key);

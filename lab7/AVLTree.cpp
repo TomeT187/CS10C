@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 using namespace std;
-
+/*
 void AVLTree::insert(const string& key) {
   // Edge case:  The tree is empty
   if(root == nullptr){
@@ -40,6 +40,118 @@ void AVLTree::insert(const string& key) {
     }
   }
 }
+*/
+void AVLTree::insert(const string& word){
+  if(root == nullptr){
+    root = new Node(word);
+  }else{
+    insert(nullptr,root,word);
+  }
+}
+void AVLTree::insert(Node* parent, Node* curr,const string& word){
+  if(word < curr->key){
+    if(curr->left == nullptr){
+      curr->left = new Node(word);
+    }else{
+      insert(curr,curr->left,word);
+    }
+  }else{
+    if(curr->right == nullptr){
+      curr->right = new Node(word);
+    }else{
+      insert(curr,curr->right,word);
+    }
+  }
+  fix(parent,curr);
+  
+}
+void AVLTree::fix(Node* parent,Node* curr){
+//balance checking
+  int balanceFactor = getBalanceFactor(curr);
+  //if unbalanced to the left
+  if(balanceFactor > 1){
+    
+    //zig zag case
+    if(getBalanceFactor(curr->left) < 0){
+      rotateLeft(curr,curr->left);
+      rotateRight(parent,curr);
+    }else{
+      rotateRight(parent,curr);
+    }
+  }
+  //if unbalanced to the right
+  else if(balanceFactor < -1){
+    if(getBalanceFactor(curr->right) > 0){
+      rotateRight(curr, curr->right);
+      rotateLeft(parent, curr);
+    }else{
+      rotateLeft(parent, curr);
+    }
+  }
+}
+
+void AVLTree::rotateLeft(Node* parent,Node* curr){
+  Node* T1 = curr->left;
+  Node* T2 = curr->right->left;
+  Node* T3 = curr->right->right;
+  //if rotating the root
+  if(parent == nullptr){
+    root = curr->right;
+    root->left = curr;
+    // curr->left = T1;//repetitive?
+    curr->right = T2;
+    root->right = T3;
+  }
+  //if rotating parent's left child
+  else if(curr->key < parent->key){
+    parent->left = curr->right;
+    parent->left->left = curr;
+    // curr->left = T1;//repetitive?
+    curr->right = T2;
+    parent->left->right = T3;
+  }
+  //if rotating parent's right child
+  else{
+    parent->right = curr->right;
+    parent->right->left = curr;
+    // curr->left = T1;//repetitive?
+    curr->right = T2;
+    parent->right->right = T3;
+  }
+}
+
+void AVLTree::rotateRight(Node* parent,Node* curr){
+  //rotating root
+  Node* T1 = curr->left->left;
+  Node* T2 = curr->left->right;
+  Node* T3 = curr->right;
+
+  if(parent == nullptr){
+    root = curr->left;
+    root->left = T1;
+    root->right = curr;
+    curr->left = T2;
+    // curr->right = T3;
+  }
+  //rotating left child
+  else if(curr->key < parent->key){
+    parent->left = curr->left;
+    parent->left->left = T1;//PROBLEM CHANGING PARENTS LEFT AFTER CHANGING PARENT LEFT ABOVE
+    parent->left->right = curr;
+    curr->left = T2;
+    // curr->right = T3;
+  }
+  //rotating right child
+  else{
+    parent->right = curr->left;
+    parent->right->left = T1;
+    parent->right->right = curr;
+    curr->left = T2;
+    // curr->right = T3;
+  }
+}
+
+
 
 int AVLTree::height_of(Node* tree) const {
   // The height (length of longest path to the bottom) of an empty tree is -1
@@ -59,18 +171,20 @@ int AVLTree::height_of(Node* tree) const {
 
 void AVLTree::printBalanceFactors() const{
   inOrder(root);
+  cout << endl;
+  preOrder(root);//REMOVE LATER
 }
 
 void AVLTree::inOrder(Node* tree) const {
   // do left, print key, do right
   if (tree == nullptr) return;
   inOrder(tree->left);
-  cout << tree->key << "(" << balanceFactor(tree) << "), ";
+  cout << tree->key << "(" << getBalanceFactor(tree) << "), ";
   inOrder(tree->right);
 }
 
-unsigned int AVLTree::balanceFactor(Node* curr) const{
-  return 0;
+int AVLTree::getBalanceFactor(Node* curr) const{
+  return (height_of(curr->left) - height_of(curr->right));
 }
 
 
@@ -78,6 +192,17 @@ unsigned int AVLTree::balanceFactor(Node* curr) const{
 //old BST functions
 //old BST functions
 //old BST functions
+
+
+
+
+
+
+
+
+
+
+
 bool AVLTree::search(const string& key) const {
   // Search can be done in a loop (or recursively).  A loop is best here
   Node* curr = root;
