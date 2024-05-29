@@ -7,6 +7,8 @@
 
 using namespace std;
 
+#define not !//for vscode being annoying
+
 int main() {
 	// declare a few needed variables for inputing the data
 	string line;    
