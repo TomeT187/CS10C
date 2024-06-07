@@ -17,23 +17,15 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <vector>
+#include <algorithm>
 using std::cout;
 using std::endl;
+using std::sort;
 
-// Using clock() is pretty old school and does not take advantage
-// of better precision timers.  But is fine for our purposes.  I'll
-// show it both ways, but if one is causing problems, just use the other.
+
 using std::clock_t;
 const int CLOCKS_PER_MS = CLOCKS_PER_SEC/1000; //clock per milliseconds
-
-// This is the more modern way to do timings with the high resolution clock
-// I'll provide an example
-#include <chrono>
-using std::chrono::steady_clock;
-using std::chrono::microseconds;
-using std::chrono::time_point;
-using std::chrono::high_resolution_clock;
-using std::chrono::duration_cast;
 
 // If using C++ 14, this is better as constexpr
 const int NUMBERS_SIZE = 50000;
@@ -52,26 +44,79 @@ void fillArrays(int arr1[], int arr2[],int arr3[]) {
   }
 }
 
-// CODETURD: You will want to write the QPartition -- See Section 5.10
-// CODETURD: in your Zybook.  Use it for both versions of quicksort
-// CODETURD: Note that quicksort will recursively call itself... that
-// CODETURD: is the point!
-void QPartition(int numbers[], int low, int high) {
+int QPartition(int numbers[], int midPoint, int low, int high) {
+  int pivot = numbers[midPoint];
+
+  bool done = false;
+  while(!done){
+    while(numbers[low] < pivot){
+      low++;
+    }
+    while(pivot < numbers[high]){
+      high--;
+    }
+    if(low >= high){
+      done = true;
+    }
+    else{
+      //swap low and high
+      int oldLow = numbers[low];
+      numbers[low] = numbers[high];
+      numbers[high] = oldLow;
+
+      low++;
+      high--;
+    }
+  }
+  return high;
+
 }
 
-void Quicksort_midpoint(int numbers[], int i, int k) {
+void Quicksort_midpoint(int numbers[], int low, int high) {
+  if(low >= high){
+    return;
+  }
+  int midPoint = low + (high - low) / 2;
+  int lowEndIndex = QPartition(numbers,midPoint,low,high);
+  Quicksort_midpoint(numbers,low,lowEndIndex);
+  Quicksort_midpoint(numbers,lowEndIndex + 1,high);
 }
 
-void Quicksort_medianOfThree(int numbers[], int i, int k) {
+void Quicksort_medianOfThree(int numbers[], int low, int high) {
+  if(low >= high){
+    return;
+  }
+
+  //determins which value to use for the pivot
+  int pivotIndex = 0;
+  int midPoint = low + (high - low) / 2;
+  if(numbers[low] < numbers[midPoint] && numbers[midPoint] < numbers[high] ){
+    pivotIndex = midPoint;
+  }else if(numbers[midPoint] < numbers[low]  && numbers[low] < numbers[high])  {
+    pivotIndex = low;
+  }else{
+    pivotIndex = high;
+  }
+  
+  int lowEndIndex = QPartition(numbers,pivotIndex,low,high);
+  Quicksort_midpoint(numbers,low,lowEndIndex);
+  Quicksort_midpoint(numbers,lowEndIndex + 1,high);
 }
 
 void InsertionSort(int numbers[], int numbersSize) {
+  for(int i = 0; i < numbersSize; i++){
+    int inserted = i;
+    //while numbers[inserted] is not at the end and less than the previous index
+    while(inserted > 0 && numbers[inserted] < numbers[inserted - 1]) {
+      //swaps numbers[inserted] with the one before it and decreases inserted
+      int swapHolder = numbers[inserted];
+      numbers[inserted] = numbers[inserted - 1];
+      numbers[inserted - 1] = swapHolder;
+      --inserted;
+    }
+  }
 }
 
-// We can compare other sorts we've talked about
-static void BubbleSort(int numbers[], int n);
-
-static void MergeSort(int numbers[], int left, int right);
 
 // A helper function that will let us know if we have sorted
 // everything
@@ -92,8 +137,6 @@ static void copy_vector_into_array(const std::vector<int>& source, int array[]) 
   }
 }
 
-static void RadixSort(int numbers[], int size);
-
 int main() {
   // I'm going to use the same array every time for all the
   // functions.  This is different than the Zybooks suggestion
@@ -105,8 +148,6 @@ int main() {
   }
   
   // We'll run our tests across a bunch of sizes
-  // CODETURD: While testing, I can do a break at the end of the
-  // CODETURD: loop so I can make faster progress
   int test_sizes[4] = { 10, 100, 1000, 50000 };
   int test_array[NUMBERS_SIZE];
   for(int i=0; i<4; ++i) {
@@ -114,150 +155,41 @@ int main() {
     cout << endl;
     cout << "-------------------- size " << size << " --------------------" << endl;
 
-    // BUBBLE SORT
+    // Insertion Sort
     {
       copy_vector_into_array(sample, test_array);
-      // CODETURD: Pick one timing scheme or the other and remove
-      // CODETURD: the one you don't use
-      time_point<steady_clock> start = high_resolution_clock::now();
-      // clock_t Start = clock();
-      BubbleSort(test_array, size);
-      // clock_t End = clock();
-      // int elapsedTime = (End - Start)/CLOCKS_PER_MS;
-      // cout << elapsedTime << " ms" << endl;
-
-      time_point<steady_clock> stop = high_resolution_clock::now();
-      microseconds duration = duration_cast<microseconds>(stop - start);
-      cout << duration.count() << " ms for bubble sort " << endl;
+       clock_t Start = clock();
+      InsertionSort(test_array, size);
+       clock_t End = clock();
+       int elapsedTime = (End - Start)/CLOCKS_PER_MS;
+       cout << elapsedTime << " ms" << endl;
       cout << "Sort is " << ((is_sorted(test_array,size))?"GOOD":"BAD") << endl;
     }
     
-    // MERGE SORT
+    // QuickSort MidPartition
     {
       copy_vector_into_array(sample, test_array);
-      // CODETURD: Pick one timing scheme or the other and remove
-      // CODETURD: the one you don't use
-      time_point<steady_clock> start = high_resolution_clock::now();
-      // clock_t Start = clock();
-      MergeSort(test_array, 0, size-1);
-      // clock_t End = clock();
-      // int elapsedTime = (End - Start)/CLOCKS_PER_MS;
-      // cout << elapsedTime << " ms" << endl;
 
-      time_point<steady_clock> stop = high_resolution_clock::now();
-      microseconds duration = duration_cast<microseconds>(stop - start);
-      cout << duration.count() << " ms for merge sort " << endl;
+       clock_t Start = clock();
+      Quicksort_midpoint(test_array, 0, size);
+       clock_t End = clock();
+       int elapsedTime = (End - Start)/CLOCKS_PER_MS;
+       cout << elapsedTime << " ms" << endl;
       cout << "Sort is " << ((is_sorted(test_array,size))?"GOOD":"BAD") << endl;
     }
     
-    // RADIX SORT
+    // Quicksort median of three
     {
       copy_vector_into_array(sample, test_array);
-      // CODETURD: Pick one timing scheme or the other and remove
-      // CODETURD: the one you don't use
-      time_point<steady_clock> start = high_resolution_clock::now();
-      // clock_t Start = clock();
-      RadixSort(test_array, size);
-      // clock_t End = clock();
-      // int elapsedTime = (End - Start)/CLOCKS_PER_MS;
-      // cout << elapsedTime << " ms" << endl;
 
-      time_point<steady_clock> stop = high_resolution_clock::now();
-      microseconds duration = duration_cast<microseconds>(stop - start);
-      cout << duration.count() << " ms for radix sort " << endl;
+       clock_t Start = clock();
+      Quicksort_medianOfThree(test_array, 0,size);
+       clock_t End = clock();
+       int elapsedTime = (End - Start)/CLOCKS_PER_MS;
+       cout << elapsedTime << " ms" << endl;
       cout << "Sort is " << ((is_sorted(test_array,size))?"GOOD":"BAD") << endl;
     }
     
-    // CODETURD: break
   }
- 
   return 0;
-}
-
-static void BubbleSort(int numbers[], int n) {
-  for (int i = 0; i < n - 1; ++i) {
-    for (int j = 0; j < n - i - 1; ++j) {
-      if (numbers[j] > numbers[j + 1]) {
-	std::swap(numbers[j], numbers[j + 1]);
-      }
-    }
-  }
-}
-
-static void merge(int numbers[], int start, int mid, int end) {
-  int start2 = mid + 1;
- 
-  // If the direct merge is already sorted
-  if (numbers[mid] <= numbers[start2]) {
-    return;
-  }
- 
-  // Two pointers to maintain start of both sub-arrays to merge
-  while (start <= mid && start2 <= end) {
- 
-    // If element 1 is in right place
-    if (numbers[start] <= numbers[start2]) {
-      start++;
-    } else {
-      int value = numbers[start2];
-      int index = start2;
- 
-      // Shift all the elements between element 1
-      // element 2, right by 1.
-      while (index != start) {
-	numbers[index] = numbers[index - 1];
-	index--;
-      }
-      numbers[start] = value;
- 
-      // Update all the pointers
-      start++;
-      mid++;
-      start2++;
-    }
-  }
-}
-
-static void MergeSort(int numbers[], int left, int right) {
-  if (left < right) {
-    int mid = (left + right)/2;
-    MergeSort(numbers, left, mid);
-    MergeSort(numbers, mid+1, right);
-    merge(numbers, left, mid, right);
-  }
-}
-
-static void RadixSort(int numbers[], int size) {
-  // LOTS of assumptions here.  I assume all data are
-  // postive integers;
-  
-  // I have to do passes based on the digits.  I stop
-  // when I extract the largest digit
-  int divisor = 1;
-  bool more = true;
-  for(int pass=0; more ; pass++) {
-    // I need 10 buckets with a lot of room in them
-    std::vector< std::vector<int> > buckets(10);
-    for(int i=0;i<10;++i) buckets[i].reserve(NUMBERS_SIZE);
-
-    // I pull off the pass'th digit and use it to put a number
-    // into a bucket.  To get it, I divide by 1, 10, 100, 1000
-    // and then do a modulo
-    more = false;
-    for(int i=0; i<size; ++i) {
-      int digit = (numbers[i]/divisor)%10;
-      if (numbers[i]/divisor/10 > 0) more = true;
-      buckets[digit].push_back(numbers[i]);
-    }
-    divisor *= 10;
-
-    // Copy the buckets back into numbers
-    int index = 0;
-    for(int i=0; i<10; ++i) {
-      const std::vector<int>& bucket = buckets[i];
-      for(int j=0; j<static_cast<int>(bucket.size()); ++j) {
-	numbers[index++] = bucket[j];
-      }
-    }
-  }
 }
