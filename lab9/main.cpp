@@ -1,19 +1,3 @@
-// CODETURD: I've written this with three sorts (and left yours blank)
-// CODETURD: You can just replace bubble with quick, merge with quickm,
-// CODETURD: and radix with insertion.
-// CODETURD: 
-// CODETURD: But, before you do; run the program as is.  Take a look at
-// CODETURD: the times.  You'll see merge sort is the early leader and
-// CODETURD: radix sort is kinda slow because of all the extra data
-// CODETURD: handling.  But, as the sizes get bigger, a pattern emerges!
-// CODETURD: 
-// CODETURD: For 1 point of LAB extra credit, join the #secret channel
-// CODETURD: (it is in our workspace) and post your times for size 50,000
-// CODETURD: using just my sorts O(n**2), O(n log n), O(n)
-// CODETURD: 
-// CODETURD: SHHH... don't tell anyone about the channel... It is our
-// CODETURD: little secret!
-
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -22,7 +6,6 @@
 using std::cout;
 using std::endl;
 using std::sort;
-
 
 using std::clock_t;
 const int CLOCKS_PER_MS = CLOCKS_PER_SEC/1000; //clock per milliseconds
@@ -49,12 +32,15 @@ int QPartition(int numbers[], int midPoint, int low, int high) {
 
   bool done = false;
   while(!done){
+    //find value greater than pivot in the first partition
     while(numbers[low] < pivot){
       low++;
     }
+    //find value lower than pivot in the second partition
     while(pivot < numbers[high]){
       high--;
     }
+    //if low crossed high 
     if(low >= high){
       done = true;
     }
@@ -76,6 +62,8 @@ void Quicksort_midpoint(int numbers[], int low, int high) {
   if(low >= high){
     return;
   }
+  //set midpoint to be middle value
+  //partition current values and cut in half
   int midPoint = low + (high - low) / 2;
   int lowEndIndex = QPartition(numbers,midPoint,low,high);
   Quicksort_midpoint(numbers,low,lowEndIndex);

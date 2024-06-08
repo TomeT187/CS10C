@@ -1,5 +1,6 @@
 #include "Jug.h"
 #include <iomanip>
+#include <iostream>
 
 
 Jug::Jug(int Ca, int Cb, int N, int cfA, int cfB, int ceA, int ceB, int cpAB, int cpBA)
@@ -11,8 +12,14 @@ int Jug::solve(string &solution){
     //check if inputs are valid
     createGraph();
     Dijkstra();
-    //end node is at states[state_Number(0,N)]
-    //trace back from end node to states[state_Number(0,0)]
+    State curr = states[state_number(0,N, Ca,Cb)];
+    std::cout << curr.a << " " << curr.b << std::endl;
+    while(curr.previous != infinity){
+        std::cout << curr.a << " " << curr.b << std::endl;
+        curr = states[curr.previous];
+    }
+    //end node is at states[state_number(0,N)]
+    //trace back from end node to states[state_number(0,0)]
     //
     return -1;
 }
@@ -50,7 +57,7 @@ void Jug::Dijkstra(){
         unsigned distance = infinity;
         unsigned current = infinity;
         for(unsigned i=0;i<states.size();++i) {
-            if (states[i].distance < distance and not states[i].visited) {
+            if (states[i].distance < distance &&  !states[i].visited) {
             distance = states[i].distance;
             current = i;
             }
@@ -132,7 +139,7 @@ bool Jug::allVisisted(const vector<State>& states){
 unsigned Jug::state_number(unsigned a, unsigned b, unsigned Ca, unsigned Cb) {
   // Simple error handling.  In the program you'll never be out of
   // bounds
-  if (a > Ca or b > Cb) {
+  if (a > Ca || b > Cb) {
     throw std::runtime_error("domain error");
   }
 

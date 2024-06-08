@@ -13,7 +13,7 @@
 
 using std::cout;
 using std::endl;
-using std::stoi;
+//using std::stoi;
 
 const unsigned infinity = std::numeric_limits<unsigned>::max();
 
@@ -60,7 +60,7 @@ struct State {
 unsigned state_number(unsigned a, unsigned b, unsigned Ca, unsigned Cb) {
   // Simple error handling.  In the program you'll never be out of
   // bounds
-  if (a > Ca or b > Cb) {
+  if (a > Ca || b > Cb) {
     throw std::runtime_error("domain error");
   }
 
@@ -78,15 +78,15 @@ int main(int argc, char** argv) {
   unsigned cpAB=1;	// Cost to pour from A to B
   unsigned cpBA=1;	// Cost to pour from B to A
 
-  if (argc > 1) Ca = stoi(argv[1]);
-  if (argc > 2) Cb = stoi(argv[2]);
-  if (argc > 3) N = stoi(argv[3]);
-  if (argc > 4) cfA = stoi(argv[4]);
-  if (argc > 5) cfB = stoi(argv[5]);
-  if (argc > 6) ceA = stoi(argv[6]);
-  if (argc > 7) ceB = stoi(argv[7]);
-  if (argc > 8) cpAB = stoi(argv[8]);
-  if (argc > 9) cpBA = stoi(argv[9]);
+  // if (argc > 1) Ca = stoi(argv[1]);
+  // if (argc > 2) Cb = stoi(argv[2]);
+  // if (argc > 3) N = stoi(argv[3]);
+  // if (argc > 4) cfA = stoi(argv[4]);
+  // if (argc > 5) cfB = stoi(argv[5]);
+  // if (argc > 6) ceA = stoi(argv[6]);
+  // if (argc > 7) ceB = stoi(argv[7]);
+  // if (argc > 8) cpAB = stoi(argv[8]);
+  // if (argc > 9) cpBA = stoi(argv[9]);
 
   // The first thing to note is that jug A can have
   // 0, 1, 2, ... Ca gallons in it (and similarly, jug B
@@ -202,7 +202,7 @@ int main(int argc, char** argv) {
   unsigned distance = infinity;
   unsigned current = infinity;
   for(unsigned i=0;i<states.size();++i) {
-    if (states[i].distance < distance and not states[i].visited) {
+    if (states[i].distance < distance && !states[i].visited) {
       distance = states[i].distance;
       current = i;
     }
